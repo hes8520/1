@@ -7,6 +7,11 @@ app = Flask(__name__)
 USER_FILE = "users.json"
 CORS(app)
 
+from flask import send_from_directory
+
+@app.route("/")
+def serve_index():
+    return send_from_directory('.', 'index.html')
 
 def load_users():
     if not os.path.exists(USER_FILE):
