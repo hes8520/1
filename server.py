@@ -9,8 +9,9 @@ CORS(app)
 
 from flask import send_from_directory
 
-@app.route("/")
-def serve_index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
     return send_from_directory('.', 'index.html')
 
 def load_users():
