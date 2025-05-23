@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>내 프로필</title>
+  <style>
+    body { font-family: "Noto Sans KR", sans-serif; background: #f5f5f5; padding: 30px; }
+    .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 0 10px #ccc; }
+    h1 { text-align: center; color: #4b0082; margin-bottom: 20px; }
+    .field { margin-bottom: 15px; }
+    .field label { font-weight: bold; color: #4b0082; display: block; margin-bottom: 5px; }
+    .field span { display: block; background: #eee; padding: 8px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>내 프로필</h1>
+    <div class="field"><label>아이디</label><span id="userid"></span></div>
+    <div class="field"><label>나이</label><span id="age"></span></div>
+    <div class="field"><label>성별</label><span id="gender"></span></div>
+    <div class="field"><label>거주 지역</label><span id="region"></span></div>
+    <div class="field"><label>관심사</label><span id="interests"></span></div>
+  </div>
+
+  <script>
+    // 예시: userid를 URL 파라미터로 받음 (또는 localStorage 등에서 가져올 수 있음)
+    const params = new URLSearchParams(window.location.search);
+    const userid = params.get("userid");
+
+    if (!userid) {
+      alert("로그인 정보가 없습니다.");
+      window.location.href = "login.html"; // 로그인 페이지로 이동
+    } else {
+      fetch(`http://localhost:5000/profile?userid=${encodeURIComponent(userid)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert("프로필 정보를 불러올 수 없습니다.");
+          } else {
+            document.getElementById("userid").textContent = data.userid;
+            document.getElementById("age").textContent = data.age + "세";
+            document.getElementById("gender").textContent = data.gender;
+            document.getElementById("region").textContent = data.region;
+            document.getElementById("interests").textContent = data.interests.join(", ");
+          }
+        })
+        .catch(err => {
+          alert("서버와 연결할 수 없습니다.");
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>

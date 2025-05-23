@@ -1,0 +1,7 @@
+{"userid": "dddddd", "password": "ffffff", "age": "35", "gender": "남성", "region": "광주", "interests": ["여행", "영화"]}
+{"userid": "ddddde", "password": "ffffff", "age": "50", "gender": "여성", "region": "인천", "interests": ["영화", "운동"]}
+{"userid": "123123", "password": "123123", "age": "34", "gender": "남성", "region": "서울", "interests": ["장기", "등산", "운동"], "isPublic": false}
+{"userid": "최성원123", "password": "qlalfqjsgh", "age": "25", "gender": "남성", "region": "충남", "interests": ["영화", "음악", "바둑", "장기", "독서", "요리", "여행"], "isPublic": false}
+{"userid": "123123123", "password": "123123123", "age": "20", "gender": "남성", "region": "부산", "interests": ["장기", "역사"], "isPublic": false}
+{"userid": "123123123123", "password": "123123123123", "age": "19", "gender": "여성", "region": "부산", "interests": ["바둑", "장기"], "isPublic": false}
+{"userid": "ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴ", "password": "asdasdasd", "age": "19", "gender": "남성", "region": "경남", "interests": ["영화"], "isPublic": false}

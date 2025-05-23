@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>노인팅</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #d8bfd8;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: bold;
+      color: #4b0082;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .round-button {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: none;
+      background-color: white;
+      color: #6c5ce7;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: 0.3s;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .round-button:hover {
+      background-color: #6c5ce7;
+      color: white;
+    }
+
+    form {
+      max-width: 400px;
+      background-color: #ffffff;
+      padding: 30px;
+      margin-top: 20px;
+      border-radius: 10px;
+      width: 100%;
+      display: none;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 18px;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .checkbox-group input[type="checkbox"],
+    .checkbox-group input[type="radio"] {
+      accent-color: red;
+    }
+
+    input[disabled],
+    select[disabled],
+    input[type="radio"][disabled] + label,
+    input[type="checkbox"][disabled] + label {
+      background-color: #f3e8ff !important;
+      color: #4b0082 !important;
+      cursor: not-allowed;
+      opacity: 1 !important;
+    }
+
+    button.modify-btn {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="welcomeMessage" style="position: fixed; top: 20px; right: 20px; font-size: 18px; color: #4b0082; font-weight: bold;"></div>
+  <button onclick="logout()" style="position: fixed; top: 20px; right: 160px; font-size: 16px; cursor: pointer;">로그아웃</button>
+
+  <h1>노인팅</h1>
+  <div class="button-container">
+    <button class="round-button" onclick="handleLogin()">회원가입 / 로그인</button>
+    <button class="round-button" onclick="showProfile()">내 프로필 보기</button>
+    <button class="round-button" onclick="showSortedProfiles()">새로운 사람 만나기</button>
+  </div>
+
+  <form id="profileForm">
+    <label>이름</label>
+    <input type="text" id="name" disabled />
+
+    <label>나이</label>
+    <select id="age" disabled></select>
+
+    <label>성별</label>
+    <div class="checkbox-group" id="genderGroup">
+      <label><input type="radio" name="gender" value="남성" disabled /> 남성</label>
+      <label><input type="radio" name="gender" value="여성" disabled /> 여성</label>
+    </div>
+
+    <label>거주지</label>
+    <select id="location" disabled>
+      <option value="">선택하세요</option>
+      <option value="서울">서울</option>
+      <option value="부산">부산</option>
+      <option value="대구">대구</option>
+      <option value="인천">인천</option>
+      <option value="광주">광주</option>
+      <option value="대전">대전</option>
+      <option value="울산">울산</option>
+      <option value="세종">세종</option>
+      <option value="경기">경기</option>
+      <option value="강원">강원</option>
+      <option value="충북">충북</option>
+      <option value="충남">충남</option>
+      <option value="전북">전북</option>
+      <option value="전남">전남</option>
+      <option value="경북">경북</option>
+      <option value="경남">경남</option>
+      <option value="제주">제주</option>
+    </select>
+
+    <label>취미</label>
+    <div class="checkbox-group" id="hobbyGroup">
+      <label><input type="checkbox" value="영화" /> 영화</label>
+      <label><input type="checkbox" value="음악" /> 음악</label>
+      <label><input type="checkbox" value="바둑" /> 바둑</label>
+      <label><input type="checkbox" value="장기" /> 장기</label>
+      <label><input type="checkbox" value="독서" /> 독서</label>
+      <label><input type="checkbox" value="요리" /> 요리</label>
+      <label><input type="checkbox" value="여행" /> 여행</label>
+      <label><input type="checkbox" value="사진" /> 사진</label>
+      <label><input type="checkbox" value="등산" /> 등산</label>
+      <label><input type="checkbox" value="낚시" /> 낚시</label>
+      <label><input type="checkbox" value="춤" /> 춤</label>
+      <label><input type="checkbox" value="가드닝" /> 가드닝</label>
+      <label><input type="checkbox" value="봉사" /> 봉사</label>
+      <label><input type="checkbox" value="운동" /> 운동</label>
+      <label><input type="checkbox" value="테니스" /> 테니스</label>
+      <label><input type="checkbox" value="골프" /> 골프</label>
+      <label><input type="checkbox" value="걷기" /> 걷기</label>
+      <label><input type="checkbox" value="카페 탐방" /> 카페 탐방</label>
+      <label><input type="checkbox" value="미술" /> 미술</label>
+      <label><input type="checkbox" value="역사" /> 역사</label>
+      <label><input type="checkbox" value="뉴스" /> 뉴스</label>
+    </div>
+
+    <label><input type="checkbox" id="isPublic" disabled /> 내 정보 공개</label>
+
+    <button type="button" class="modify-btn" id="editButton" onclick="enableEditing()">수정</button>
+    <button type="button" class="modify-btn" id="saveButton" style="display:none;" onclick="saveProfile()">저장</button>
+  </form>
+
+  <script>
+    function updateWelcomeMessage() {
+      const userid = sessionStorage.getItem("userid");
+      const welcomeDiv = document.getElementById("welcomeMessage");
+      if (userid) {
+        welcomeDiv.textContent = `${userid}님 어서오세요!`;
+      } else {
+        welcomeDiv.textContent = "";
+      }
+    }
+
+    // 페이지 로드 시 호출
+    updateWelcomeMessage();
+
+    function logout() {
+      sessionStorage.removeItem("userid");
+      alert("로그아웃 되었습니다.");
+      updateWelcomeMessage(); // 환영 메시지 초기화
+      window.location.reload();
+    }
+
+    const ageSelect = document.getElementById("age");
+    for (let i = 1; i <= 100; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = i;
+      ageSelect.appendChild(option);
+    }
+
+    function handleLogin() {
+      // 로그인 페이지 또는 회원가입 페이지 이동 예시
+      window.location.href = "index.html";
+    }
+
+    function showSortedProfiles() {
+      alert("정렬된 프로필 보기 로직 필요");
+    }
+
+    function showProfile() {
+  const form = document.getElementById("profileForm");
+
+  if (form.style.display === "flex") {
+    form.style.display = "none";
+    return;
+  }
+
+  const userid = sessionStorage.getItem("userid");
+  console.log("현재 로그인한 유저 ID:", userid); // ✅ 디버깅 로그
+
+  if (!userid) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+
+  fetch("http://localhost:5000/get_profile", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userid })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("서버에서 받은 데이터:", data); // ✅ 디버깅 로그
+
+      if (data.profile) {
+        const p = data.profile;
+        form.style.display = "flex";
+        document.getElementById("name").value = p.userid || "";
+        document.getElementById("age").value = p.age || "";
+        document.querySelectorAll('input[name="gender"]').forEach(radio => {
+          radio.checked = (radio.value === p.gender);
+        });
+        document.getElementById("location").value = p.region || "";
+
+        const interests = Array.isArray(p.interests)
+          ? p.interests
+          : typeof p.interests === "string"
+            ? p.interests.split(",").map(h => h.trim())
+            : [];
+
+        document.querySelectorAll('#hobbyGroup input[type="checkbox"]').forEach(box => {
+          box.checked = interests.includes(box.value);
+        });
+
+        document.getElementById("isPublic").checked = !!p.isPublic;
+        setFormDisabled(true);
+      } else {
+        alert("프로필을 불러오지 못했습니다.");
+      }
+    })
+    .catch(err => {
+      console.error("프로필 불러오기 에러:", err);
+      alert("서버 연결에 실패했습니다.");
+    });
+}
+
+    function enableEditing() {
+      setFormDisabled(false);
+      document.getElementById("saveButton").style.display = "inline-block";
+      document.getElementById("editButton").style.display = "none";
+    }
+
+    function setFormDisabled(disabled) {
+      document.querySelectorAll("#profileForm input, #profileForm select").forEach(el => {
+        el.disabled = disabled;
+      });
+    }
+
+    function saveProfile() {
+      const userid = sessionStorage.getItem("userid");
+      if (!userid) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+
+      const age = document.getElementById("age").value;
+      const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
+      const region = document.getElementById("location").value;
+      const interests = Array.from(
+        document.querySelectorAll('#hobbyGroup input[type="checkbox"]:checked')
+      ).map(box => box.value);
+      const isPublic = document.getElementById("isPublic").checked;
+
+      fetch("http://localhost:5000/update_profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userid,
+          age,
+          gender,
+          region,
+          interests,
+          isPublic
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.message === "프로필 업데이트 완료") {
+            alert("저장되었습니다.");
+            setFormDisabled(true);
+            document.getElementById("saveButton").style.display = "none";
+            document.getElementById("editButton").style.display = "inline-block";
+          } else {
+            alert("저장 실패: " + data.message);
+          }
+        });
+    }
+  </script>
+
+  <footer>노인팅 프로젝트</footer>
+</body>
+</html>
