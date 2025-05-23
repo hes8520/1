@@ -12,6 +12,10 @@ from flask import send_from_directory
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    # 요청한 파일이 현재 폴더에 존재하면 그 파일 반환
+    if path != "" and os.path.exists(path):
+        return send_from_directory('.', path)
+    # 아니면 index.html 반환 (프론트엔드 라우터가 처리)
     return send_from_directory('.', 'index.html')
 
 def load_users():
