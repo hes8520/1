@@ -9,12 +9,6 @@ CORS(app)
 
 from flask import send_from_directory
 
-@app.before_request
-def log_client_ip():
-    # X-Forwarded-For 헤더에서 원래 클라이언트 IP 추출
-    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    print(f"Client IP: {ip} - {request.method} {request.path}")
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
