@@ -237,7 +237,7 @@
     return;
   }
 
-  fetch("http://localhost:5000/get_profile", {
+  fetch('/get_profile', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userid })
