@@ -2,108 +2,202 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>회원가입 시작</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>노인팅 - 회원가입</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Noto Sans KR", sans-serif;
-      background: linear-gradient(2deg, #bcbbf8, #ffffff, #cfcef1);
-      padding-top: 150px;
-      margin-bottom: 380px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5; /* Light gray background */
     }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 50px;
-      padding: 20px;
-      box-shadow: 0 0 10px #ac9fe6;
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
-    label {
-      display: block;
-      text-align: left;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #4b0082;
-      font-size: 16px;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
     }
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
-    button {
-      width: 100%;
-      background-color: #6c5ce7;
-      color: white;
-      border: none;
-      padding: 14px 0;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    /* Custom focus rings */
+    input:focus, select:focus, button:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px #a78bfa; /* Violet focus ring */
     }
-    button:hover {
-      background-color: #4b0082;
+    /* Touch target sizing */
+     .touch-target {
+        padding: 0.75rem 1rem; /* Tailwind's p-3 p-4 equivalent */
+        min-height: 44px; /* Minimum touch target height */
+        min-width: 44px; /* Minimum touch target width */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>회원가입 시작</h1>
-    <label for="userid">아이디</label>
-    <input type="text" id="userid" placeholder="아이디를 입력하세요" />
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" placeholder="비밀번호를 입력하세요" />
-    <button id="nextBtn">다음</button>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
+
+  <div class="w-full max-w-sm bg-white shadow-xl rounded-lg overflow-hidden flex flex-col">
+
+    <header class="bg-violet-600 text-white p-4 shadow-md text-center">
+      <h1 class="text-xl sm:text-2xl font-bold">회원가입</h1>
+    </header>
+
+    <main class="p-6 sm:p-8 space-y-6">
+      <form id="signupForm" class="space-y-5">
+        <div>
+          <label for="userid" class="block text-sm font-medium text-gray-700 mb-1">아이디</label>
+          <input type="text" id="userid" placeholder="6자 이상 아이디 입력" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
+          <p id="useridError" class="text-red-500 text-xs mt-1 hidden">아이디는 6자 이상이어야 합니다.</p>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
+          <input type="password" id="password" placeholder="6자 이상 비밀번호 입력" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
+          <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">비밀번호는 6자 이상이어야 합니다.</p>
+        </div>
+
+        <button type="button" id="nextBtn" class="w-full py-3 px-4 bg-violet-500 hover:bg-violet-700 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
+          다음
+        </button>
+      </form>
+       <p class="text-center text-sm text-gray-600">
+        이미 계정이 있으신가요? <a href="index.html" class="font-medium text-violet-600 hover:text-violet-500">로그인</a>
+        </p>
+    </main>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-xs sm:max-w-sm">
+            <p id="messageText" class="text-base sm:text-lg mb-4 text-gray-800"></p>
+            <button id="messageOkButton" class="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-6 rounded-md text-sm sm:text-base touch-target">
+                확인
+            </button>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-gray-400 p-3 border-t border-gray-200">
+      노인팅 프로젝트
+    </footer>
   </div>
 
   <script>
-    document.getElementById("nextBtn").addEventListener("click", async () => {
-      const userid = document.getElementById("userid").value.trim();
-      const password = document.getElementById("password").value.trim();
+    // --- DOM Elements ---
+    const useridInput = document.getElementById("userid");
+    const passwordInput = document.getElementById("password");
+    const nextButton = document.getElementById("nextBtn");
+    const useridError = document.getElementById("useridError");
+    const passwordError = document.getElementById("passwordError");
 
-      if (userid.length < 6) {
-        alert("아이디는 6자 이상이어야 합니다.");
+    const messageBox = document.getElementById('messageBox');
+    const messageText = document.getElementById('messageText');
+    const messageOkButton = document.getElementById('messageOkButton');
+
+    // --- Custom Alert Function ---
+    function showCustomAlert(message) {
+        messageText.textContent = message;
+        messageBox.classList.remove('hidden');
+    }
+
+    messageOkButton.addEventListener('click', () => {
+        messageBox.classList.add('hidden');
+    });
+
+    // --- Input Validation ---
+    function validateInput(inputElement, errorElement, minLength, message) {
+        if (inputElement.value.trim().length < minLength) {
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+            inputElement.classList.add('border-red-500');
+            return false;
+        }
+        errorElement.classList.add('hidden');
+        inputElement.classList.remove('border-red-500');
+        return true;
+    }
+
+    useridInput.addEventListener('input', () => validateInput(useridInput, useridError, 6, "아이디는 6자 이상이어야 합니다."));
+    passwordInput.addEventListener('input', () => validateInput(passwordInput, passwordError, 6, "비밀번호는 6자 이상이어야 합니다."));
+
+
+    // --- Event Handler for "Next" button ---
+    nextButton.addEventListener("click", async () => {
+      const isUserIdValid = validateInput(useridInput, useridError, 6, "아이디는 6자 이상이어야 합니다.");
+      const isPasswordValid = validateInput(passwordInput, passwordError, 6, "비밀번호는 6자 이상이어야 합니다.");
+
+      if (!isUserIdValid || !isPasswordValid) {
+        showCustomAlert("입력 내용을 확인해주세요.");
         return;
       }
-      if (password.length < 6) {
-        alert("비밀번호는 6자 이상이어야 합니다.");
-        return;
-      }
+
+      const userid = useridInput.value.trim();
+      const password = passwordInput.value.trim(); // In a real app, password should be hashed server-side.
+
+      // Show loading state on button (optional)
+      nextButton.disabled = true;
+      nextButton.textContent = "확인 중...";
+      nextButton.classList.add('opacity-75', 'cursor-not-allowed');
+
 
       try {
-        const res = await fetch('check_id', {
+        // Simulate API call for ID check
+        const res = await fetch('/check_id', { // Make sure this endpoint exists on your server
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userid }),
         });
+
+        if (!res.ok) {
+            // Try to parse error message from server if available
+            let errorData;
+            try {
+                errorData = await res.json();
+            } catch (e) {
+                // If no JSON body, use status text
+            }
+            throw new Error(errorData?.message || `서버 오류: ${res.status}`);
+        }
+        
         const result = await res.json();
 
         if (result.exists) {
-          alert("이미 사용 중인 아이디입니다.");
-          return;
+          showCustomAlert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
+          useridInput.classList.add('border-red-500');
+          useridError.textContent = "이미 사용 중인 아이디입니다.";
+          useridError.classList.remove('hidden');
+        } else {
+          // Store credentials temporarily (sessionStorage is fine for this step)
+          sessionStorage.setItem("signup_userid", userid);
+          sessionStorage.setItem("signup_password", password); // Storing plain password is not secure for long term.
+
+          // Navigate to the next step of registration
+          window.location.href = "personal_information.html"; // Ensure this page exists
         }
-
-        sessionStorage.setItem("userid", userid);
-        sessionStorage.setItem("password", password);
-
-        window.location.href = "personal_information.html";
       } catch (err) {
-        alert("서버와 연결할 수 없습니다.");
-        console.error(err);
+        console.error("ID 확인 또는 서버 연결 오류:", err);
+        showCustomAlert(err.message || "아이디 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      } finally {
+        // Restore button state
+        nextButton.disabled = false;
+        nextButton.textContent = "다음";
+        nextButton.classList.remove('opacity-75', 'cursor-not-allowed');
       }
     });
+
+    // Add Enter key submission for form
+    document.getElementById('signupForm').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            nextButton.click(); // Trigger the click event on the "Next" button
+        }
+    });
+
   </script>
 </body>
 </html>

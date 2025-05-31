@@ -2,90 +2,155 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>노인팅 - 로그인</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background: linear-gradient(2deg, #eafae9, #ffffff, #e6f5e8);
-      padding-top: 150px;
-      margin-bottom: 380px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5; /* Consistent light gray background */
     }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 50px;
-      padding: 20px;
-      box-shadow: 0 0 10px #caf1c7;
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #228B22;
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #2c662d;
-      font-size: 16px;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
     }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 12px 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
-    button {
-      width: 100%;
-      background-color: #228B22;
-      color: white;
-      border: none;
-      padding: 14px 0;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    /* Custom focus rings */
+    input:focus, select:focus, button:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px #a78bfa; /* Violet focus ring */
     }
-    button:hover {
-      background-color: #176617;
-    }
-    #signupBtn {
-      margin-top: 12px;
-      background-color: #4CAF50;
-    }
-    #signupBtn:hover {
-      background-color: #388E3C;
+    /* Touch target sizing */
+     .touch-target {
+        padding: 0.75rem 1rem; /* Tailwind's p-3 p-4 equivalent */
+        min-height: 44px; /* Minimum touch target height */
+        min-width: 44px; /* Minimum touch target width */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>노인팅 로그인</h1>
-    <label for="userid">아이디</label>
-    <input type="text" id="userid" placeholder="아이디를 입력하세요" />
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" placeholder="비밀번호를 입력하세요" />
-    <button id="loginBtn">로그인</button>
-    <button id="signupBtn">회원가입</button>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
+
+  <div class="w-full max-w-sm bg-white shadow-xl rounded-lg overflow-hidden flex flex-col">
+
+    <header class="bg-violet-600 text-white p-4 shadow-md text-center">
+      <h1 class="text-xl sm:text-2xl font-bold">노인팅 로그인</h1>
+    </header>
+
+    <main class="p-6 sm:p-8 space-y-6">
+      <form id="loginForm" class="space-y-5">
+        <div>
+          <label for="userid" class="block text-sm font-medium text-gray-700 mb-1">아이디</label>
+          <input type="text" id="userid" placeholder="아이디를 입력하세요" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
+          <p id="useridError" class="text-red-500 text-xs mt-1 hidden">아이디를 입력해주세요.</p>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
+          <input type="password" id="password" placeholder="비밀번호를 입력하세요" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
+          <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">비밀번호를 입력해주세요.</p>
+        </div>
+
+        <button type="button" id="loginBtn" class="w-full py-3 px-4 bg-violet-500 hover:bg-violet-700 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
+          로그인
+        </button>
+      </form>
+      <div class="text-center">
+        <p class="text-sm text-gray-600">계정이 없으신가요?</p>
+        <button type="button" id="signupBtn" class="mt-2 w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
+          회원가입
+        </button>
+      </div>
+    </main>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-xs sm:max-w-sm">
+            <p id="messageText" class="text-base sm:text-lg mb-4 text-gray-800"></p>
+            <button id="messageOkButton" class="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-6 rounded-md text-sm sm:text-base touch-target">
+                확인
+            </button>
+        </div>
+    </div>
+
+    <footer class="text-center text-xs text-gray-400 p-3 border-t border-gray-200">
+      노인팅 프로젝트
+    </footer>
   </div>
 
   <script>
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-  const userid = document.getElementById("userid").value.trim();
-  const password = document.getElementById("password").value.trim();
+    // --- DOM Elements ---
+    const useridInput = document.getElementById("userid");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("loginBtn");
+    const signupButton = document.getElementById("signupBtn");
+    const useridError = document.getElementById("useridError");
+    const passwordError = document.getElementById("passwordError");
 
-  if (!userid || !password) {
-    alert("아이디와 비밀번호를 모두 입력하세요.");
-    return;
-  }
+    const messageBox = document.getElementById('messageBox');
+    const messageText = document.getElementById('messageText');
+    const messageOkButton = document.getElementById('messageOkButton');
 
-  try {
-    const res = await fetch('/login', {
+    // --- Custom Alert Function ---
+    function showCustomAlert(message, callback) {
+        messageText.textContent = message;
+        messageBox.classList.remove('hidden');
+        messageOkButton.onclick = () => {
+            messageBox.classList.add('hidden');
+            if (callback) callback();
+        };
+    }
+
+    // --- Input Validation ---
+    function validateLoginField(inputElement, errorElement, message) {
+        if (inputElement.value.trim() === "") {
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+            inputElement.classList.add('border-red-500');
+            return false;
+        }
+        errorElement.classList.add('hidden');
+        inputElement.classList.remove('border-red-500');
+        return true;
+    }
+    
+    useridInput.addEventListener('input', () => validateLoginField(useridInput, useridError, "아이디를 입력해주세요."));
+    passwordInput.addEventListener('input', () => validateLoginField(passwordInput, passwordError, "비밀번호를 입력해주세요."));
+
+    // --- Event Handlers ---
+    loginButton.addEventListener("click", async () => {
+      const isUserIdValid = validateLoginField(useridInput, useridError, "아이디를 입력해주세요.");
+      const isPasswordValid = validateLoginField(passwordInput, passwordError, "비밀번호를 입력해주세요.");
+
+      if (!isUserIdValid || !isPasswordValid) {
+        showCustomAlert("아이디와 비밀번호를 모두 입력하세요.");
+        return;
+      }
+
+      const userid = useridInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      // Show loading state
+      /*loginButton.disabled = true;
+      loginButton.textContent = "로그인 중...";
+      loginButton.classList.add('opacity-75', 'cursor-not-allowed');*/
+      signupButton.disabled = true;
+
+
+      try {
+    const res = await fetch('http://localhost:5000/login', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userid, password })
@@ -93,21 +158,39 @@
     const result = await res.json();
 
     if (res.ok) {
-      sessionStorage.setItem("userid", userid);  // ✅ 수정된 부분!
-      alert("로그인 성공!");
-      window.location.href = "main.html";
-    } else {
-      alert("로그인 실패: " + result.message);
-    }
+  sessionStorage.setItem("userid", userid);
+  showCustomAlert("로그인 성공!", () => {
+    window.location.href = "main.html";
+  });
+} else {
+  showCustomAlert("로그인 실패: " + result.message);
+  // 로그인 실패 시 버튼 상태 복원
+  loginButton.disabled = false;
+  loginButton.textContent = "로그인";
+  loginButton.classList.remove('opacity-75', 'cursor-not-allowed');
+  signupButton.disabled = false;
+}
   } catch (err) {
     alert("서버와 연결할 수 없습니다.");
     console.error(err);
   }
 });
 
-    document.getElementById("signupBtn").addEventListener("click", () => {
-      window.location.href = "register.html";
+
+    signupButton.addEventListener("click", () => {
+      // Assuming your first signup page is named 'noin_ting_signup_v1.html' or similar
+      // Or 'register.html' if that's the entry point for the multi-step signup
+      window.location.href = "register.html"; 
     });
+
+    // Add Enter key submission for form
+    document.getElementById('loginForm').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            loginButton.click(); // Trigger the click event on the "로그인" button
+        }
+    });
+
   </script>
 </body>
 </html>

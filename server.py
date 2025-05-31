@@ -32,7 +32,7 @@ def load_users():
 def save_users(users):
     with open(USER_FILE, "w", encoding="utf-8") as f:
         for user in users:
-            f.write(json.dumps(user, ensure_ascii=False) + "\n")
+            f.write(json.dumps(user, ensure_ascii=False) + "\n") 
 
 
 @app.route("/check_id", methods=["POST"])
@@ -121,4 +121,4 @@ def get_public_profiles():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

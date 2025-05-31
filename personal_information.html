@@ -1,222 +1,369 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
-  <title>개인 정보 입력</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>노인팅 - 개인 정보 입력</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Noto Sans KR", sans-serif;
-      background: linear-gradient(2deg, #cfcef1, #ffffff, #bcbbf8);
-      padding-top: 150px;
-      margin-bottom: 380px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5; /* Light gray background */
     }
-
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 50px;
-      padding: 20px;
-      box-shadow: 0 0 10px #ac9fe6;
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
     }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #4b0082;
-      font-size: 16px;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
     }
-
-    select,
-    input[type="checkbox"],
-    input[type="radio"] {
-      margin-bottom: 20px;
-      font-size: 16px;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
-
-    select {
-      width: 100%;
-      padding: 12px 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
+    /* Custom focus rings */
+    input:focus, select:focus, button:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px #a78bfa; /* Violet focus ring */
     }
-
-    .gender-options,
+    /* Touch target sizing */
+     .touch-target {
+        padding: 0.75rem 1rem; /* Tailwind's p-3 p-4 equivalent */
+        min-height: 44px; /* Minimum touch target height */
+        min-width: 44px; /* Minimum touch target width */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    /* Styling for checkbox and radio groups */
     .interests-options {
-      margin-bottom: 20px;
-    }
-
-    .gender-options label,
-    .interests-options label {
-      margin-right: 15px;
-      font-weight: normal;
-      color: #4b0082;
-      cursor: pointer;
-    }
-
-    button {
-      width: 100%;
-      background-color: #6c5ce7;
-      color: white;
-      border: none;
-      padding: 14px 0;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #4b0082;
+        max-height: 150px; /* Adjust as needed */
+        overflow-y: auto;
+        border: 1px solid #d1d5db; /* gray-300 */
+        border-radius: 0.375rem; /* rounded-md */
+        padding: 0.5rem; /* p-2 */
     }
   </style>
 </head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
 
-<body>
-  <div class="container">
-    <h1>개인 정보 입력</h1>
+  <div class="w-full max-w-sm bg-white shadow-xl rounded-lg overflow-hidden flex flex-col">
 
-    <label for="age">나이</label>
-    <select id="age">
-      <option value="">선택하세요</option>
-    </select>
+    <header class="bg-violet-600 text-white p-4 shadow-md text-center">
+      <h1 class="text-xl sm:text-2xl font-bold">개인 정보 입력</h1>
+    </header>
 
-    <label>성별</label>
-    <div class="gender-options">
-      <label><input type="radio" name="gender" value="남성" /> 남성</label>
-      <label><input type="radio" name="gender" value="여성" /> 여성</label>
-      <label><input type="radio" name="gender" value="기타" /> 기타</label>
+    <main class="p-6 sm:p-8 space-y-6 overflow-y-auto">
+      <form id="personalInfoForm" class="space-y-5">
+        <div>
+          <label for="age" class="block text-sm font-medium text-gray-700 mb-1">나이</label>
+          <select id="age" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base">
+            <option value="">선택하세요</option>
+            </select>
+          <p id="ageError" class="text-red-500 text-xs mt-1 hidden">나이를 선택해주세요.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">성별</label>
+          <div id="genderGroup" class="gender-options flex items-center space-x-4 p-2 border border-gray-300 rounded-md">
+            <label class="flex items-center space-x-1 cursor-pointer">
+              <input type="radio" name="gender" value="남성" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300" />
+              <span class="text-sm text-gray-700">남성</span>
+            </label>
+            <label class="flex items-center space-x-1 cursor-pointer">
+              <input type="radio" name="gender" value="여성" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300" />
+              <span class="text-sm text-gray-700">여성</span>
+            </label>
+            <label class="flex items-center space-x-1 cursor-pointer">
+              <input type="radio" name="gender" value="기타" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300" />
+              <span class="text-sm text-gray-700">기타</span>
+            </label>
+          </div>
+          <p id="genderError" class="text-red-500 text-xs mt-1 hidden">성별을 선택해주세요.</p>
+        </div>
+
+        <div>
+          <label for="region" class="block text-sm font-medium text-gray-700 mb-1">거주 지역</label>
+          <select id="region" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base">
+            <option value="">선택하세요</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="대구">대구</option>
+            <option value="인천">인천</option>
+            <option value="광주">광주</option>
+            <option value="대전">대전</option>
+            <option value="울산">울산</option>
+            <option value="세종">세종</option>
+            <option value="경기">경기</option>
+            <option value="강원">강원</option>
+            <option value="충북">충북</option>
+            <option value="충남">충남</option>
+            <option value="전북">전북</option>
+            <option value="전남">전남</option>
+            <option value="경북">경북</option>
+            <option value="경남">경남</option>
+            <option value="제주">제주</option>
+          </select>
+          <p id="regionError" class="text-red-500 text-xs mt-1 hidden">거주 지역을 선택해주세요.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">관심사 (복수 선택 가능)</label>
+          <div id="interestsGroup" class="interests-options grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="영화" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">영화</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="음악" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">음악</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="바둑" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">바둑</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="장기" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">장기</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="독서" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">독서</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="요리" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">요리</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="여행" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">여행</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="사진" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">사진</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="등산" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">등산</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="낚시" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">낚시</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="춤" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">춤</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="가드닝" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">가드닝</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="봉사" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">봉사</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="운동" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">운동</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="테니스" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">테니스</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="골프" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">골프</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="걷기" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">걷기</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="카페 탐방" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">카페 탐방</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="미술" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">미술</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="역사" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">역사</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md cursor-pointer">
+              <input type="checkbox" value="뉴스" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" /> <span class="text-sm text-gray-700">뉴스</span>
+            </label>
+          </div>
+           <p id="interestsError" class="text-red-500 text-xs mt-1 hidden">관심사를 1개 이상 선택해주세요.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0 pt-2">
+            <button type="button" id="backBtn" class="w-full py-3 px-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
+              뒤로 가기
+            </button>
+            <button type="button" id="signupBtn" class="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
+              회원가입 완료
+            </button>
+        </div>
+      </form>
+    </main>
+
+    <div id="messageBox" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-xs sm:max-w-sm">
+            <p id="messageText" class="text-base sm:text-lg mb-4 text-gray-800"></p>
+            <button id="messageOkButton" class="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-6 rounded-md text-sm sm:text-base touch-target">
+                확인
+            </button>
+        </div>
     </div>
 
-    <label for="region">거주 지역</label>
-    <select id="region">
-      <option value="">선택하세요</option>
-      <option value="서울">서울</option>
-      <option value="부산">부산</option>
-      <option value="대구">대구</option>
-      <option value="인천">인천</option>
-      <option value="광주">광주</option>
-      <option value="대전">대전</option>
-      <option value="울산">울산</option>
-      <option value="세종">세종</option>
-      <option value="경기">경기</option>
-      <option value="강원">강원</option>
-      <option value="충북">충북</option>
-      <option value="충남">충남</option>
-      <option value="전북">전북</option>
-      <option value="전남">전남</option>
-      <option value="경북">경북</option>
-      <option value="경남">경남</option>
-      <option value="제주">제주</option>
-    </select>
-
-    <label>관심사 (복수 선택 가능)</label>
-    <div class="interests-options">
-      <label><input type="checkbox" value="영화" /> 영화</label>
-      <label><input type="checkbox" value="음악" /> 음악</label>
-      <label><input type="checkbox" value="바둑" /> 바둑</label>
-      <label><input type="checkbox" value="장기" /> 장기</label>
-      <label><input type="checkbox" value="독서" /> 독서</label>
-      <label><input type="checkbox" value="요리" /> 요리</label>
-      <label><input type="checkbox" value="여행" /> 여행</label>
-      <label><input type="checkbox" value="사진" /> 사진</label>
-      <label><input type="checkbox" value="등산" /> 등산</label>
-      <label><input type="checkbox" value="낚시" /> 낚시</label>
-      <label><input type="checkbox" value="춤" /> 춤</label>
-      <label><input type="checkbox" value="가드닝" /> 가드닝</label>
-      <label><input type="checkbox" value="봉사" /> 봉사</label>
-      <label><input type="checkbox" value="운동" /> 운동</label>
-      <label><input type="checkbox" value="테니스" /> 테니스</label>
-      <label><input type="checkbox" value="골프" /> 골프</label>
-      <label><input type="checkbox" value="걷기" /> 걷기</label>
-      <label><input type="checkbox" value="카페 탐방" /> 카페 탐방</label>
-      <label><input type="checkbox" value="미술" /> 미술</label>
-      <label><input type="checkbox" value="역사" /> 역사</label>
-      <label><input type="checkbox" value="뉴스" /> 뉴스</label>
-    </div>
-
-    <button id="signupBtn">회원가입 완료</button>
+    <footer class="text-center text-xs text-gray-400 p-3 border-t border-gray-200">
+      노인팅 프로젝트
+    </footer>
   </div>
 
   <script>
-    // sessionStorage에서 정보 가져오기
-    const userid = sessionStorage.getItem("userid");
-    const password = sessionStorage.getItem("password");
+    // --- DOM Elements ---
+    const ageSelect = document.getElementById("age");
+    const genderGroup = document.getElementById("genderGroup");
+    const regionSelect = document.getElementById("region");
+    const interestsGroup = document.getElementById("interestsGroup");
+    const signupButton = document.getElementById("signupBtn");
+    const backButton = document.getElementById("backBtn");
+
+    const ageError = document.getElementById("ageError");
+    const genderError = document.getElementById("genderError");
+    const regionError = document.getElementById("regionError");
+    const interestsError = document.getElementById("interestsError");
+
+    const messageBox = document.getElementById('messageBox');
+    const messageText = document.getElementById('messageText');
+    const messageOkButton = document.getElementById('messageOkButton');
+
+    // --- Custom Alert Function ---
+    function showCustomAlert(message, callback) {
+        messageText.textContent = message;
+        messageBox.classList.remove('hidden');
+        messageOkButton.onclick = () => {
+            messageBox.classList.add('hidden');
+            if (callback) callback();
+        };
+    }
+    
+    // --- Retrieve data from sessionStorage ---
+    const userid = sessionStorage.getItem("signup_userid");
+    const password = sessionStorage.getItem("signup_password");
 
     if (!userid || !password) {
-      alert("잘못된 접근입니다. 다시 회원가입을 시작해주세요.");
-      window.location.href = "register.html";
+      showCustomAlert("잘못된 접근입니다. 회원가입을 다시 시작해주세요.", () => {
+        window.location.href = "index.html"; // Or your first signup page
+      });
     }
 
-    // 나이 select 옵션 동적 생성
-    const ageSelect = document.getElementById("age");
-    for (let i = 18; i <= 100; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.textContent = i + "세";
-      ageSelect.appendChild(option);
-    }
-
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      const age = document.getElementById("age").value;
-      const genderElems = document.getElementsByName("gender");
-      let gender = "";
-      for (const elem of genderElems) {
-        if (elem.checked) {
-          gender = elem.value;
-          break;
-        }
+    // --- Populate Age Select ---
+    function populateAgeSelect() {
+      for (let i = 18; i <= 100; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i + "세";
+        ageSelect.appendChild(option);
       }
-      const region = document.getElementById("region").value;
+    }
+    populateAgeSelect(); // Call on script load
 
-      const interests = Array.from(
-        document.querySelectorAll(".interests-options input[type='checkbox']:checked")
+    // --- Input Validation ---
+    function validateField(value, errorElement, message) {
+        if (!value) {
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+            return false;
+        }
+        errorElement.classList.add('hidden');
+        return true;
+    }
+
+    function validateInterests() {
+        const selectedInterests = Array.from(interestsGroup.querySelectorAll("input[type='checkbox']:checked"));
+        if (selectedInterests.length === 0) {
+            interestsError.textContent = "관심사를 1개 이상 선택해주세요.";
+            interestsError.classList.remove('hidden');
+            return false;
+        }
+        interestsError.classList.add('hidden');
+        return true;
+    }
+    
+    // --- Event Listeners ---
+    backButton.addEventListener("click", () => {
+      window.history.back(); // Simple way to go to the previous page
+    });
+
+    signupButton.addEventListener("click", async () => {
+      // Reset previous error messages
+      ageError.classList.add('hidden');
+      genderError.classList.add('hidden');
+      regionError.classList.add('hidden');
+      interestsError.classList.add('hidden');
+
+      const age = ageSelect.value;
+      const selectedGender = genderGroup.querySelector("input[name='gender']:checked");
+      const gender = selectedGender ? selectedGender.value : "";
+      const region = regionSelect.value;
+      const selectedInterests = Array.from(
+        interestsGroup.querySelectorAll("input[type='checkbox']:checked")
       ).map(cb => cb.value);
 
-      if (!age || !gender || !region) {
-        alert("나이, 성별, 거주 지역을 모두 선택해주세요.");
+      // Validation
+      const isAgeValid = validateField(age, ageError, "나이를 선택해주세요.");
+      const isGenderValid = validateField(gender, genderError, "성별을 선택해주세요.");
+      const isRegionValid = validateField(region, regionError, "거주 지역을 선택해주세요.");
+      const areInterestsValid = validateInterests();
+
+      if (!isAgeValid || !isGenderValid || !isRegionValid || !areInterestsValid) {
+        showCustomAlert("모든 필수 정보를 입력해주세요.");
         return;
       }
 
-      const data = {
+      const signupData = {
         userid,
-        password,
-        age,
+        password, // In a real app, password should already be hashed or handled securely by the backend.
+        age: parseInt(age), // Convert age to number
         gender,
         region,
-        interests,
+        interests: selectedInterests,
       };
+
+      // Show loading state
+      signupButton.disabled = true;
+      signupButton.textContent = "가입 처리 중...";
+      signupButton.classList.add('opacity-75', 'cursor-not-allowed');
+      backButton.disabled = true;
+
 
       try {
         const res = await fetch('/signup', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(signupData), // Corrected: use signupData
         });
+
         const result = await res.json();
+
         if (res.ok) {
-          alert("회원가입 완료!");
-          sessionStorage.removeItem("userid");
-          sessionStorage.removeItem("password");
-          window.location.href = "welcome.html";
+          showCustomAlert("회원가입이 성공적으로 완료되었습니다!", () => { // Changed to custom alert
+            sessionStorage.removeItem("signup_userid"); // Corrected key
+            sessionStorage.removeItem("signup_password"); // Corrected key
+            window.location.href = "main.html";
+          });
         } else {
-          alert("회원가입 실패: " + result.message);
+          showCustomAlert(`회원가입 실패: ${result.message || '알 수 없는 오류가 발생했습니다.'}`); // Changed to custom alert
         }
       } catch (err) {
-        alert("서버와 연결할 수 없습니다.");
-        console.error(err);
+        showCustomAlert("서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요."); // Changed to custom alert
+        console.error("Signup failed:", err); // Log the actual error for debugging
+      } finally {
+        // Re-enable buttons and reset text after fetch completes (whether success or failure)
+        signupButton.disabled = false;
+        signupButton.textContent = "회원가입 완료";
+        signupButton.classList.remove('opacity-75', 'cursor-not-allowed');
+        backButton.disabled = false;
       }
     });
-  </script>
-</body>
 
+    
+    // Add Enter key submission for form
+    document.getElementById('personalInfoForm').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            signupButton.click(); // Trigger the click event on the "회원가입 완료" button
+        }
+    });
+
+</script>
+</body>
 </html>

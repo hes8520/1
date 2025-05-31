@@ -5,3 +5,10 @@
 {"userid": "123123123", "password": "123123123", "age": "20", "gender": "남성", "region": "부산", "interests": ["장기", "역사"], "isPublic": false}
 {"userid": "123123123123", "password": "123123123123", "age": "19", "gender": "여성", "region": "부산", "interests": ["바둑", "장기"], "isPublic": false}
 {"userid": "ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴ", "password": "asdasdasd", "age": "19", "gender": "남성", "region": "경남", "interests": ["영화"], "isPublic": false}
+{"userid": "qweqwe", "password": "qweqwe", "age": "22", "gender": "여성", "region": "경북", "interests": ["장기", "독서", "여행"], "isPublic": false}
+{"userid": "qweqwe123", "password": "qweqwe123", "age": "21", "gender": "남성", "region": "경북", "interests": ["독서", "춤"], "isPublic": false}
+{"userid": "132132", "password": "132132", "age": "22", "gender": "여성", "region": "전남", "interests": ["음악", "요리"], "isPublic": false}
+{"userid": "zxczxc", "password": "zxczxc", "age": 19, "gender": "여성", "region": "경북", "interests": ["영화"], "isPublic": false}
+{"userid": "tyutyu", "password": "tyutyu", "age": 20, "gender": "남성", "region": "전남", "interests": ["장기", "낚시"], "isPublic": false}
+{"userid": "asdzxc", "password": "asdzxc", "age": 18, "gender": "여성", "region": "경북", "interests": ["바둑", "독서"], "isPublic": false}
+{"userid": "ㅑㅐㅔㅑㅐㅔ", "password": "$2b$12$oHOGQfbOfvrMOYYv8cVn2esFwahvIUg2hzkH011S/mEJVt/KN58g.", "age": 20, "gender": "여성", "region": "경남", "interests": ["영화"], "isPublic": false}

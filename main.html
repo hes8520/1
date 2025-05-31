@@ -2,310 +2,448 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>노인팅</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Arial", sans-serif;
-      background-color: #d8bfd8;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5; /* Light gray background for a softer look */
     }
-
-    h1 {
-      font-size: 48px;
-      font-weight: bold;
-      color: #4b0082;
+    /* Custom scrollbar for a cleaner look if needed */
+    ::-webkit-scrollbar {
+      width: 6px;
     }
-
-    .button-container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 30px;
-      flex-wrap: wrap;
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
-
-    .round-button {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      border: none;
-      background-color: white;
-      color: #6c5ce7;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: 0.3s;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 10px;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
     }
-
-    .round-button:hover {
-      background-color: #6c5ce7;
-      color: white;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
-
-    form {
-      max-width: 400px;
-      background-color: #ffffff;
-      padding: 30px;
-      margin-top: 20px;
-      border-radius: 10px;
-      width: 100%;
-      display: none;
-      flex-direction: column;
-    }
-
-    label {
-      font-size: 18px;
-      margin-top: 10px;
-      display: block;
-    }
-
-    input[type="text"],
-    select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #cccccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 5px;
-    }
-
-    .checkbox-group input[type="checkbox"],
-    .checkbox-group input[type="radio"] {
-      accent-color: red;
-    }
-
-    input[disabled],
-    select[disabled],
-    input[type="radio"][disabled] + label,
-    input[type="checkbox"][disabled] + label {
-      background-color: #f3e8ff !important;
-      color: #4b0082 !important;
+    /* Styling for disabled elements to match the original intent */
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+      background-color: #e9ecef !important; /* Lighter gray for disabled */
+      color: #6c757d !important; /* Muted text color */
       cursor: not-allowed;
       opacity: 1 !important;
     }
-
-    button.modify-btn {
-      margin-top: 20px;
+    input[type="radio"]:disabled + label,
+    input[type="checkbox"]:disabled + label {
+      color: #6c757d !important;
+      cursor: not-allowed;
+    }
+    input[type="radio"]:disabled,
+    input[type="checkbox"]:disabled {
+      accent-color: #adb5bd;
+    }
+    /* Custom focus rings for better accessibility */
+    input:focus, select:focus, textarea:focus, button:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 2px #a78bfa; /* Violet focus ring */
+    }
+    /* Ensure sufficient touch target size for buttons and interactive elements */
+    .touch-target {
+        padding: 0.75rem 1rem; /* Tailwind's p-3 p-4 equivalent */
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
   </style>
 </head>
+<body class="flex flex-col items-center min-h-screen p-4 sm:p-6">
 
-<body>
-  <div id="welcomeMessage" style="position: fixed; top: 20px; right: 20px; font-size: 18px; color: #4b0082; font-weight: bold;"></div>
-  <button onclick="logout()" style="position: fixed; top: 20px; right: 160px; font-size: 16px; cursor: pointer;">로그아웃</button>
+  <div class="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden flex flex-col min-h-[calc(100vh-2rem)] sm:min-h-[calc(100vh-3rem)]">
 
-  <h1>노인팅</h1>
-  <div class="button-container">
-    <button class="round-button" onclick="handleLogin()">회원가입 / 로그인</button>
-    <button class="round-button" onclick="showProfile()">내 프로필 보기</button>
-    <button class="round-button" onclick="showSortedProfiles()">새로운 사람 만나기</button>
+    <header class="bg-violet-600 text-white p-4 shadow-md">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl sm:text-3xl font-bold">노인팅</h1>
+        <div class="text-right">
+          <div id="welcomeMessage" class="text-sm sm:text-base font-semibold"></div>
+          <button onclick="logout()" class="text-xs sm:text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-violet-300 rounded">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow p-6 space-y-8 overflow-y-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <button
+          class="round-button bg-violet-500 hover:bg-violet-700 text-white w-full h-32 sm:h-40 text-base sm:text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center touch-target"
+          onclick="handleLogin()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          회원가입 / 로그인
+        </button>
+        <button
+          class="round-button bg-sky-500 hover:bg-sky-700 text-white w-full h-32 sm:h-40 text-base sm:text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center touch-target"
+          onclick="showProfile()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          내 프로필 보기
+        </button>
+        <button
+          class="round-button bg-emerald-500 hover:bg-emerald-700 text-white w-full h-32 sm:h-40 text-base sm:text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center sm:col-span-2 touch-target"
+          onclick="showSortedProfiles()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          새로운 사람 만나기
+        </button>
+      </div>
+
+      <form id="profileForm" class="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-lg shadow hidden">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">이름</label>
+          <input type="text" id="name" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500" disabled />
+        </div>
+
+        <div>
+          <label for="age" class="block text-sm font-medium text-gray-700 mb-1">나이</label>
+          <select id="age" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500" disabled></select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">성별</label>
+          <div id="genderGroup" class="flex items-center space-x-4">
+            <label class="flex items-center space-x-1">
+              <input type="radio" name="gender" value="남성" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300" disabled />
+              <span>남성</span>
+            </label>
+            <label class="flex items-center space-x-1">
+              <input type="radio" name="gender" value="여성" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300" disabled />
+              <span>여성</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700 mb-1">거주지</label>
+          <select id="location" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500" disabled>
+            <option value="">선택하세요</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="대구">대구</option>
+            <option value="인천">인천</option>
+            <option value="광주">광주</option>
+            <option value="대전">대전</option>
+            <option value="울산">울산</option>
+            <option value="세종">세종</option>
+            <option value="경기">경기</option>
+            <option value="강원">강원</option>
+            <option value="충북">충북</option>
+            <option value="충남">충남</option>
+            <option value="전북">전북</option>
+            <option value="전남">전남</option>
+            <option value="경북">경북</option>
+            <option value="경남">경남</option>
+            <option value="제주">제주</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">취미 (여러 개 선택 가능)</label>
+          <div id="hobbyGroup" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-2 border rounded-md">
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="영화" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>영화</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="음악" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>음악</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="바둑" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>바둑</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="장기" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>장기</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="독서" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>독서</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="요리" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>요리</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="여행" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>여행</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="사진" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>사진</span>
+            </label>
+             <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="등산" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>등산</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="낚시" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>낚시</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="춤" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>춤</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="가드닝" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>가드닝</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="봉사" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>봉사</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="운동" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>운동</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="테니스" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>테니스</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="골프" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>골프</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="걷기" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>걷기</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="카페 탐방" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>카페 탐방</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="미술" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>미술</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="역사" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>역사</span>
+            </label>
+            <label class="flex items-center space-x-1 p-1 hover:bg-violet-50 rounded-md">
+              <input type="checkbox" value="뉴스" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled/> <span>뉴스</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <input type="checkbox" id="isPublic" class="focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded" disabled />
+          <label for="isPublic" class="text-sm font-medium text-gray-700">내 정보 공개</label>
+        </div>
+
+        <div class="flex space-x-3 pt-2">
+          <button type="button" id="editButton" onclick="enableEditing()" class="w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-md shadow-sm transition duration-150 touch-target">수정</button>
+          <button type="button" id="saveButton" style="display:none;" onclick="saveProfile()" class="w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md shadow-sm transition duration-150 touch-target">저장</button>
+        </div>
+         <div id="messageBox" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+            <div class="bg-white p-5 rounded-lg shadow-xl text-center">
+                <p id="messageText" class="text-lg mb-4"></p>
+                <button id="messageOkButton" class="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-4 rounded">
+                    확인
+                </button>
+            </div>
+        </div>
+      </form>
+    </main>
+
+    <footer class="text-center text-xs sm:text-sm text-gray-500 p-3 border-t border-gray-200">
+      노인팅 프로젝트
+    </footer>
   </div>
 
-  <form id="profileForm">
-    <label>이름</label>
-    <input type="text" id="name" disabled />
-
-    <label>나이</label>
-    <select id="age" disabled></select>
-
-    <label>성별</label>
-    <div class="checkbox-group" id="genderGroup">
-      <label><input type="radio" name="gender" value="남성" disabled /> 남성</label>
-      <label><input type="radio" name="gender" value="여성" disabled /> 여성</label>
-    </div>
-
-    <label>거주지</label>
-    <select id="location" disabled>
-      <option value="">선택하세요</option>
-      <option value="서울">서울</option>
-      <option value="부산">부산</option>
-      <option value="대구">대구</option>
-      <option value="인천">인천</option>
-      <option value="광주">광주</option>
-      <option value="대전">대전</option>
-      <option value="울산">울산</option>
-      <option value="세종">세종</option>
-      <option value="경기">경기</option>
-      <option value="강원">강원</option>
-      <option value="충북">충북</option>
-      <option value="충남">충남</option>
-      <option value="전북">전북</option>
-      <option value="전남">전남</option>
-      <option value="경북">경북</option>
-      <option value="경남">경남</option>
-      <option value="제주">제주</option>
-    </select>
-
-    <label>취미</label>
-    <div class="checkbox-group" id="hobbyGroup">
-      <label><input type="checkbox" value="영화" /> 영화</label>
-      <label><input type="checkbox" value="음악" /> 음악</label>
-      <label><input type="checkbox" value="바둑" /> 바둑</label>
-      <label><input type="checkbox" value="장기" /> 장기</label>
-      <label><input type="checkbox" value="독서" /> 독서</label>
-      <label><input type="checkbox" value="요리" /> 요리</label>
-      <label><input type="checkbox" value="여행" /> 여행</label>
-      <label><input type="checkbox" value="사진" /> 사진</label>
-      <label><input type="checkbox" value="등산" /> 등산</label>
-      <label><input type="checkbox" value="낚시" /> 낚시</label>
-      <label><input type="checkbox" value="춤" /> 춤</label>
-      <label><input type="checkbox" value="가드닝" /> 가드닝</label>
-      <label><input type="checkbox" value="봉사" /> 봉사</label>
-      <label><input type="checkbox" value="운동" /> 운동</label>
-      <label><input type="checkbox" value="테니스" /> 테니스</label>
-      <label><input type="checkbox" value="골프" /> 골프</label>
-      <label><input type="checkbox" value="걷기" /> 걷기</label>
-      <label><input type="checkbox" value="카페 탐방" /> 카페 탐방</label>
-      <label><input type="checkbox" value="미술" /> 미술</label>
-      <label><input type="checkbox" value="역사" /> 역사</label>
-      <label><input type="checkbox" value="뉴스" /> 뉴스</label>
-    </div>
-
-    <label><input type="checkbox" id="isPublic" disabled /> 내 정보 공개</label>
-
-    <button type="button" class="modify-btn" id="editButton" onclick="enableEditing()">수정</button>
-    <button type="button" class="modify-btn" id="saveButton" style="display:none;" onclick="saveProfile()">저장</button>
-  </form>
-
   <script>
+    // --- DOM Elements ---
+    const welcomeDiv = document.getElementById("welcomeMessage");
+    const ageSelect = document.getElementById("age");
+    const profileForm = document.getElementById("profileForm");
+    const nameInput = document.getElementById("name");
+    const locationSelect = document.getElementById("location");
+    const genderRadios = document.querySelectorAll('input[name="gender"]');
+    const hobbyCheckboxes = document.querySelectorAll('#hobbyGroup input[type="checkbox"]');
+    const isPublicCheckbox = document.getElementById("isPublic");
+    const editButton = document.getElementById("editButton");
+    const saveButton = document.getElementById("saveButton");
+    const messageBox = document.getElementById('messageBox');
+    const messageText = document.getElementById('messageText');
+    const messageOkButton = document.getElementById('messageOkButton');
+
+    // --- Custom Alert Function ---
+    function showCustomAlert(message) {
+        messageText.textContent = message;
+        messageBox.classList.remove('hidden');
+    }
+
+    messageOkButton.addEventListener('click', () => {
+        messageBox.classList.add('hidden');
+    });
+    
+    // --- Utility Functions ---
     function updateWelcomeMessage() {
       const userid = sessionStorage.getItem("userid");
-      const welcomeDiv = document.getElementById("welcomeMessage");
       if (userid) {
         welcomeDiv.textContent = `${userid}님 어서오세요!`;
       } else {
-        welcomeDiv.textContent = "";
+        welcomeDiv.textContent = "로그인이 필요합니다.";
       }
     }
 
-    // 페이지 로드 시 호출
-    updateWelcomeMessage();
+    function populateAgeSelect() {
+      if (!ageSelect.options.length) { // Populate only if empty
+        for (let i = 18; i <= 100; i++) { // Assuming min age 18
+          const option = document.createElement("option");
+          option.value = i;
+          option.text = i;
+          ageSelect.appendChild(option);
+        }
+      }
+    }
+    
+    function setFormDisabled(disabled) {
+      nameInput.disabled = disabled; // Name is always userid, so always disabled for editing
+      ageSelect.disabled = disabled;
+      genderRadios.forEach(radio => radio.disabled = disabled);
+      locationSelect.disabled = disabled;
+      hobbyCheckboxes.forEach(checkbox => checkbox.disabled = disabled);
+      isPublicCheckbox.disabled = disabled;
 
-    function logout() {
-      sessionStorage.removeItem("userid");
-      alert("로그아웃 되었습니다.");
-      updateWelcomeMessage(); // 환영 메시지 초기화
-      window.location.reload();
+      // Ensure correct styling for disabled elements (Tailwind handles some, custom CSS handles others)
+      const elements = [nameInput, ageSelect, locationSelect, isPublicCheckbox, ...genderRadios, ...hobbyCheckboxes];
+        elements.forEach(el => {
+            if (disabled) {
+                el.classList.add('disabled:opacity-75', 'disabled:cursor-not-allowed', 'disabled:bg-gray-200');
+            } else {
+                el.classList.remove('disabled:opacity-75', 'disabled:cursor-not-allowed', 'disabled:bg-gray-200');
+            }
+        });
     }
 
-    const ageSelect = document.getElementById("age");
-    for (let i = 1; i <= 100; i++) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.text = i;
-      ageSelect.appendChild(option);
+    // --- Event Handlers & Logic ---
+    function logout() {
+      sessionStorage.removeItem("userid");
+      showCustomAlert("로그아웃 되었습니다.");
+      updateWelcomeMessage();
+      profileForm.style.display = "none"; // Hide profile form on logout
+      // window.location.reload(); // Consider if reload is necessary or just UI update
     }
 
     function handleLogin() {
-      // 로그인 페이지 또는 회원가입 페이지 이동 예시
+      // Redirect to login/signup page (assuming index.html is that page)
       window.location.href = "index.html";
     }
 
     function showSortedProfiles() {
-      alert("정렬된 프로필 보기 로직 필요");
+      showCustomAlert("정렬된 프로필 보기 기능은 현재 준비 중입니다.");
     }
 
     function showProfile() {
-  const form = document.getElementById("profileForm");
-
-  if (form.style.display === "flex") {
-    form.style.display = "none";
-    return;
-  }
-
-  const userid = sessionStorage.getItem("userid");
-  console.log("현재 로그인한 유저 ID:", userid); // ✅ 디버깅 로그
-
-  if (!userid) {
-    alert("로그인이 필요합니다.");
-    return;
-  }
-
-  fetch('/get_profile', {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userid })
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("서버에서 받은 데이터:", data); // ✅ 디버깅 로그
-
-      if (data.profile) {
-        const p = data.profile;
-        form.style.display = "flex";
-        document.getElementById("name").value = p.userid || "";
-        document.getElementById("age").value = p.age || "";
-        document.querySelectorAll('input[name="gender"]').forEach(radio => {
-          radio.checked = (radio.value === p.gender);
-        });
-        document.getElementById("location").value = p.region || "";
-
-        const interests = Array.isArray(p.interests)
-          ? p.interests
-          : typeof p.interests === "string"
-            ? p.interests.split(",").map(h => h.trim())
-            : [];
-
-        document.querySelectorAll('#hobbyGroup input[type="checkbox"]').forEach(box => {
-          box.checked = interests.includes(box.value);
-        });
-
-        document.getElementById("isPublic").checked = !!p.isPublic;
-        setFormDisabled(true);
-      } else {
-        alert("프로필을 불러오지 못했습니다.");
+      // Toggle profile form visibility
+      if (profileForm.style.display === "block" || profileForm.classList.contains('flex')) {
+        profileForm.style.display = "none";
+        profileForm.classList.remove('flex');
+        profileForm.classList.add('hidden');
+        return;
       }
-    })
-    .catch(err => {
-      console.error("프로필 불러오기 에러:", err);
-      alert("서버 연결에 실패했습니다.");
-    });
-}
+
+      const userid = sessionStorage.getItem("userid");
+      console.log("현재 로그인한 유저 ID:", userid);
+
+      if (!userid) {
+        showCustomAlert("로그인이 필요합니다. '회원가입 / 로그인' 버튼을 눌러주세요.");
+        return;
+      }
+
+      // Fetch profile data
+      fetch('/get_profile', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userid })
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log("서버에서 받은 데이터:", data);
+        if (data.profile) {
+          const p = data.profile;
+          // Populate form fields
+          nameInput.value = p.userid || ""; // Name is typically the userid and not editable
+          ageSelect.value = p.age || "";
+          genderRadios.forEach(radio => {
+            radio.checked = (radio.value === p.gender);
+          });
+          locationSelect.value = p.region || "";
+
+          // Handle interests: ensure it's an array
+          const interests = Array.isArray(p.interests)
+            ? p.interests
+            : typeof p.interests === "string"
+              ? p.interests.split(",").map(h => h.trim()).filter(h => h) // Filter out empty strings
+              : [];
+          
+          hobbyCheckboxes.forEach(box => {
+            box.checked = interests.includes(box.value);
+          });
+
+          isPublicCheckbox.checked = !!p.isPublic;
+          
+          // Display and disable form
+          profileForm.style.display = "block"; // Use block for standard flow
+          profileForm.classList.remove('hidden');
+          profileForm.classList.add('flex', 'flex-col'); // Use flex for internal layout
+          setFormDisabled(true);
+          editButton.style.display = "inline-block";
+          saveButton.style.display = "none";
+        } else {
+          showCustomAlert(data.message || "프로필을 불러오지 못했습니다. 새로운 프로필을 작성하시겠습니까?");
+          // Optionally, enable form for new profile creation if desired
+           profileForm.style.display = "block";
+           profileForm.classList.remove('hidden');
+           profileForm.classList.add('flex', 'flex-col');
+           nameInput.value = userid; // Pre-fill name with userid
+           setFormDisabled(false); // Enable form for new entry
+           editButton.style.display = "none";
+           saveButton.style.display = "inline-block";
+        }
+      })
+      .catch(err => {
+        console.error("프로필 불러오기 에러:", err);
+        showCustomAlert("서버 연결에 실패했거나 프로필이 없습니다. 새로 작성해주세요.");
+        profileForm.style.display = "block";
+        profileForm.classList.remove('hidden');
+        profileForm.classList.add('flex', 'flex-col');
+        nameInput.value = userid; // Pre-fill name with userid
+        setFormDisabled(false); // Enable form for new entry
+        editButton.style.display = "none";
+        saveButton.style.display = "inline-block";
+      });
+    }
 
     function enableEditing() {
       setFormDisabled(false);
-      document.getElementById("saveButton").style.display = "inline-block";
-      document.getElementById("editButton").style.display = "none";
-    }
-
-    function setFormDisabled(disabled) {
-      document.querySelectorAll("#profileForm input, #profileForm select").forEach(el => {
-        el.disabled = disabled;
-      });
+      // nameInput.disabled = true; // Keep name (userid) non-editable
+      saveButton.style.display = "inline-block";
+      editButton.style.display = "none";
     }
 
     function saveProfile() {
       const userid = sessionStorage.getItem("userid");
       if (!userid) {
-        alert("로그인이 필요합니다.");
+        showCustomAlert("로그인이 필요합니다.");
         return;
       }
 
-      const age = document.getElementById("age").value;
+      const age = ageSelect.value;
       const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
-      const region = document.getElementById("location").value;
+      const region = locationSelect.value;
       const interests = Array.from(
         document.querySelectorAll('#hobbyGroup input[type="checkbox"]:checked')
       ).map(box => box.value);
-      const isPublic = document.getElementById("isPublic").checked;
+      const isPublic = isPublicCheckbox.checked;
 
-      fetch("http://localhost:5000/update_profile", {
+      // Basic validation
+      if (!age || !gender || !region) {
+        showCustomAlert("나이, 성별, 거주지는 필수 항목입니다.");
+        return;
+      }
+
+      fetch("http://localhost:5000/update_profile", { // Ensure this URL is correct
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -313,24 +451,57 @@
           age,
           gender,
           region,
-          interests,
+          interests, // Send as an array
           isPublic
         })
       })
-        .then(res => res.json())
-        .then(data => {
-          if (data.message === "프로필 업데이트 완료") {
-            alert("저장되었습니다.");
-            setFormDisabled(true);
-            document.getElementById("saveButton").style.display = "none";
-            document.getElementById("editButton").style.display = "inline-block";
-          } else {
-            alert("저장 실패: " + data.message);
-          }
-        });
+      .then(res => {
+        if (!res.ok) {
+            return res.json().then(errData => { throw { status: res.status, data: errData }; });
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data.message === "프로필 업데이트 완료" || data.success) { // Adjust based on actual server response
+          showCustomAlert("저장되었습니다.");
+          setFormDisabled(true);
+          saveButton.style.display = "none";
+          editButton.style.display = "inline-block";
+        } else {
+          showCustomAlert("저장 실패: " + (data.message || "알 수 없는 오류"));
+        }
+      })
+      .catch(err => {
+        console.error("프로필 저장 에러:", err);
+        let errorMessage = "프로필 저장 중 오류가 발생했습니다.";
+        if (err.data && err.data.message) {
+            errorMessage += ` 서버 메시지: ${err.data.message}`;
+        } else if (err.message) {
+            errorMessage += ` (${err.message})`;
+        }
+        showCustomAlert(errorMessage);
+      });
     }
-  </script>
 
-  <footer>노인팅 프로젝트</footer>
+    // --- Initial Setup ---
+    document.addEventListener('DOMContentLoaded', () => {
+      updateWelcomeMessage();
+      populateAgeSelect(); // Populate age options
+      
+      // Initial state of form and buttons
+      profileForm.style.display = "none";
+      setFormDisabled(true); // All form fields initially disabled
+      editButton.style.display = "inline-block"; // Show edit by default
+      saveButton.style.display = "none"; // Hide save by default
+
+      // Add event listeners to hobby checkboxes to enable/disable them correctly with the form
+      const allFormInputs = profileForm.querySelectorAll('input, select');
+        allFormInputs.forEach(input => {
+            // The setFormDisabled function already handles this.
+            // This is more for if you had individual logic per input type.
+        });
+    });
+
+  </script>
 </body>
 </html>
