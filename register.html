@@ -87,117 +87,44 @@
     </footer>
   </div>
 
-  <script>
-    // --- DOM Elements ---
-    const useridInput = document.getElementById("userid");
-    const passwordInput = document.getElementById("password");
-    const nextButton = document.getElementById("nextBtn");
-    const useridError = document.getElementById("useridError");
-    const passwordError = document.getElementById("passwordError");
+   <script>
+      document.getElementById("nextBtn").addEventListener("click", async () => {
+        const userid = document.getElementById("userid").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-    const messageBox = document.getElementById('messageBox');
-    const messageText = document.getElementById('messageText');
-    const messageOkButton = document.getElementById('messageOkButton');
-
-    // --- Custom Alert Function ---
-    function showCustomAlert(message) {
-        messageText.textContent = message;
-        messageBox.classList.remove('hidden');
-    }
-
-    messageOkButton.addEventListener('click', () => {
-        messageBox.classList.add('hidden');
-    });
-
-    // --- Input Validation ---
-    function validateInput(inputElement, errorElement, minLength, message) {
-        if (inputElement.value.trim().length < minLength) {
-            errorElement.textContent = message;
-            errorElement.classList.remove('hidden');
-            inputElement.classList.add('border-red-500');
-            return false;
+        if (userid.length < 6) {
+          alert("아이디는 6자 이상이어야 합니다.");
+          return;
         }
-        errorElement.classList.add('hidden');
-        inputElement.classList.remove('border-red-500');
-        return true;
-    }
-
-    useridInput.addEventListener('input', () => validateInput(useridInput, useridError, 6, "아이디는 6자 이상이어야 합니다."));
-    passwordInput.addEventListener('input', () => validateInput(passwordInput, passwordError, 6, "비밀번호는 6자 이상이어야 합니다."));
-
-
-    // --- Event Handler for "Next" button ---
-    nextButton.addEventListener("click", async () => {
-      const isUserIdValid = validateInput(useridInput, useridError, 6, "아이디는 6자 이상이어야 합니다.");
-      const isPasswordValid = validateInput(passwordInput, passwordError, 6, "비밀번호는 6자 이상이어야 합니다.");
-
-      if (!isUserIdValid || !isPasswordValid) {
-        showCustomAlert("입력 내용을 확인해주세요.");
-        return;
-      }
-
-      const userid = useridInput.value.trim();
-      const password = passwordInput.value.trim(); // In a real app, password should be hashed server-side.
-
-      // Show loading state on button (optional)
-      nextButton.disabled = true;
-      nextButton.textContent = "확인 중...";
-      nextButton.classList.add('opacity-75', 'cursor-not-allowed');
-
-
-      try {
-        // Simulate API call for ID check
-        const res = await fetch('/check_id', { // Make sure this endpoint exists on your server
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userid }),
-        });
-
-        if (!res.ok) {
-            // Try to parse error message from server if available
-            let errorData;
-            try {
-                errorData = await res.json();
-            } catch (e) {
-                // If no JSON body, use status text
-            }
-            throw new Error(errorData?.message || `서버 오류: ${res.status}`);
+        if (password.length < 6) {
+          alert("비밀번호는 6자 이상이어야 합니다.");
+          return;
         }
-        
-        const result = await res.json();
 
-        if (result.exists) {
-          showCustomAlert("이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.");
-          useridInput.classList.add('border-red-500');
-          useridError.textContent = "이미 사용 중인 아이디입니다.";
-          useridError.classList.remove('hidden');
-        } else {
-          // Store credentials temporarily (sessionStorage is fine for this step)
-          sessionStorage.setItem("signup_userid", userid);
-          sessionStorage.setItem("signup_password", password); // Storing plain password is not secure for long term.
+        try {
+          const res = await fetch("check_id", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userid }),
+          });
+          const result = await res.json();
 
-          // Navigate to the next step of registration
-          window.location.href = "personal_information.html"; // Ensure this page exists
+          if (result.exists) {
+            alert("이미 사용 중인 아이디입니다.");
+            return;
+          }
+
+          sessionStorage.setItem("userid", userid);
+          sessionStorage.setItem("password", password);
+
+          window.location.href = "personal_information.html";
+        } catch (err) {
+          alert("서버와 연결할 수 없습니다.");
+          console.error(err);
         }
-      } catch (err) {
-        console.error("ID 확인 또는 서버 연결 오류:", err);
-        showCustomAlert(err.message || "아이디 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      } finally {
-        // Restore button state
-        nextButton.disabled = false;
-        nextButton.textContent = "다음";
-        nextButton.classList.remove('opacity-75', 'cursor-not-allowed');
-      }
-    });
-
-    // Add Enter key submission for form
-    document.getElementById('signupForm').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent default form submission
-            nextButton.click(); // Trigger the click event on the "Next" button
-        }
-    });
-
-  </script>
+      });
+    </script>
+  </body>
+</html>
 </body>
 </html>

@@ -52,6 +52,8 @@
 
     <main class="p-6 sm:p-8 space-y-6">
       <form id="loginForm" class="space-y-5">
+        
+
         <div>
           <label for="userid" class="block text-sm font-medium text-gray-700 mb-1">아이디</label>
           <input type="text" id="userid" placeholder="아이디를 입력하세요" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
@@ -63,7 +65,7 @@
           <input type="password" id="password" placeholder="비밀번호를 입력하세요" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 text-base" />
           <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">비밀번호를 입력해주세요.</p>
         </div>
-
+        
         <button type="button" id="loginBtn" class="w-full py-3 px-4 bg-violet-500 hover:bg-violet-700 text-white font-semibold rounded-md shadow-md transition duration-300 ease-in-out touch-target text-base sm:text-lg">
           로그인
         </button>
@@ -90,107 +92,44 @@
     </footer>
   </div>
 
-  <script>
-    // --- DOM Elements ---
-    const useridInput = document.getElementById("userid");
-    const passwordInput = document.getElementById("password");
-    const loginButton = document.getElementById("loginBtn");
-    const signupButton = document.getElementById("signupBtn");
-    const useridError = document.getElementById("useridError");
-    const passwordError = document.getElementById("passwordError");
+      <script>
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", async () => {
+          const userid = document.getElementById("userid").value.trim();
+          const password = document.getElementById("password").value.trim();
 
-    const messageBox = document.getElementById('messageBox');
-    const messageText = document.getElementById('messageText');
-    const messageOkButton = document.getElementById('messageOkButton');
+          if (!userid || !password) {
+            alert("아이디와 비밀번호를 모두 입력하세요.");
+            return;
+          }
 
-    // --- Custom Alert Function ---
-    function showCustomAlert(message, callback) {
-        messageText.textContent = message;
-        messageBox.classList.remove('hidden');
-        messageOkButton.onclick = () => {
-            messageBox.classList.add('hidden');
-            if (callback) callback();
-        };
-    }
+          try {
+            const res = await fetch("/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userid, password }),
+            });
+            const result = await res.json();
 
-    // --- Input Validation ---
-    function validateLoginField(inputElement, errorElement, message) {
-        if (inputElement.value.trim() === "") {
-            errorElement.textContent = message;
-            errorElement.classList.remove('hidden');
-            inputElement.classList.add('border-red-500');
-            return false;
-        }
-        errorElement.classList.add('hidden');
-        inputElement.classList.remove('border-red-500');
-        return true;
-    }
-    
-    useridInput.addEventListener('input', () => validateLoginField(useridInput, useridError, "아이디를 입력해주세요."));
-    passwordInput.addEventListener('input', () => validateLoginField(passwordInput, passwordError, "비밀번호를 입력해주세요."));
+            if (res.ok) {
+              sessionStorage.setItem("userid", userid); // ✅ 수정된 부분!
+              sessionStorage.setItem("name", result.name);
+              alert("로그인 성공!");
+              window.location.href = "main.html";
+            } else {
+              alert("로그인 실패: " + result.message);
+            }
+          } catch (err) {
+            alert("서버와 연결할 수 없습니다.");
+            console.error(err);
+          }
+        });
+        
 
-    // --- Event Handlers ---
-    loginButton.addEventListener("click", async () => {
-      const isUserIdValid = validateLoginField(useridInput, useridError, "아이디를 입력해주세요.");
-      const isPasswordValid = validateLoginField(passwordInput, passwordError, "비밀번호를 입력해주세요.");
-
-      if (!isUserIdValid || !isPasswordValid) {
-        showCustomAlert("아이디와 비밀번호를 모두 입력하세요.");
-        return;
-      }
-
-      const userid = useridInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      // Show loading state
-      /*loginButton.disabled = true;
-      loginButton.textContent = "로그인 중...";
-      loginButton.classList.add('opacity-75', 'cursor-not-allowed');*/
-      signupButton.disabled = true;
-
-
-      try {
-    const res = await fetch('/login', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userid, password })
-    });
-    const result = await res.json();
-
-    if (res.ok) {
-  sessionStorage.setItem("userid", userid);
-  showCustomAlert("로그인 성공!", () => {
-    window.location.href = "main.html";
-  });
-} else {
-  showCustomAlert("로그인 실패: " + result.message);
-  // 로그인 실패 시 버튼 상태 복원
-  loginButton.disabled = false;
-  loginButton.textContent = "로그인";
-  loginButton.classList.remove('opacity-75', 'cursor-not-allowed');
-  signupButton.disabled = false;
-}
-  } catch (err) {
-    alert("서버와 연결할 수 없습니다.");
-    console.error(err);
-  }
+      document.getElementById("signupBtn").addEventListener("click", () => {
+  window.location.href = "register.html";
 });
-
-
-    signupButton.addEventListener("click", () => {
-      // Assuming your first signup page is named 'noin_ting_signup_v1.html' or similar
-      // Or 'register.html' if that's the entry point for the multi-step signup
-      window.location.href = "register.html"; 
-    });
-
-    // Add Enter key submission for form
-    document.getElementById('loginForm').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent default form submission
-            loginButton.click(); // Trigger the click event on the "로그인" button
-        }
-    });
-
-  </script>
-</body>
+    </script>
+  </body>
 </html>

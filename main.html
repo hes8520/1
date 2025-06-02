@@ -60,6 +60,7 @@
     }
   </style>
 </head>
+
 <body class="flex flex-col items-center min-h-screen p-4 sm:p-6">
 
   <div class="w-full max-w-md bg-white shadow-xl rounded-lg overflow-hidden flex flex-col min-h-[calc(100vh-2rem)] sm:min-h-[calc(100vh-3rem)]">
@@ -102,7 +103,54 @@
         </button>
       </div>
 
+      <form
+  id="rankingForm"
+  class="hidden mt-6 bg-white p-4 rounded shadow w-full max-w-md"
+>
+  <h3 class="text-lg font-bold mb-2">만남 우선순위 설정</h3>
+
+  <label class="block mt-2">1. 나이 순위</label>
+  <select name="ageRank" class="w-full border rounded p-1" required>
+    <option value="">선택하세요</option>
+    <option value="1">1순위</option>
+    <option value="2">2순위</option>
+    <option value="3">3순위</option>
+  </select>
+
+  <label class="block mt-2">2. 거주지 순위</label>
+  <select name="locationRank" class="w-full border rounded p-1" required>
+    <option value="">선택하세요</option>
+    <option value="1">1순위</option>
+    <option value="2">2순위</option>
+    <option value="3">3순위</option>
+  </select>
+
+  <label class="block mt-2">3. 취미 순위</label>
+  <select name="hobbyRank" class="w-full border rounded p-1" required>
+    <option value="">선택하세요</option>
+    <option value="1">1순위</option>
+    <option value="2">2순위</option>
+    <option value="3">3순위</option>
+  </select>
+
+  <label class="block mt-2">4. 성별 선택</label>
+  <div class="flex gap-4 mt-1">
+    <label><input type="radio" name="preferredGender" value="남성" required> 남자</label>
+    <label><input type="radio" name="preferredGender" value="여성" required> 여자</label>
+    <label><input type="radio" name="preferredGender" value="성별무관" required> 성별 무관</label>
+  </div>
+
+  <button
+    type="button"
+    onclick="submitRanking()"
+    class="mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded"
+  >
+    조회
+  </button>
+</form>
+
       <form id="profileForm" class="space-y-4 bg-slate-50 p-4 sm:p-6 rounded-lg shadow hidden">
+        
         <div>
           <label for="name" class="block text-sm font-medium text-gray-700 mb-1">이름</label>
           <input type="text" id="name" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500" disabled />
@@ -246,262 +294,296 @@
   </div>
 
   <script>
-    // --- DOM Elements ---
-    const welcomeDiv = document.getElementById("welcomeMessage");
-    const ageSelect = document.getElementById("age");
-    const profileForm = document.getElementById("profileForm");
-    const nameInput = document.getElementById("name");
-    const locationSelect = document.getElementById("location");
-    const genderRadios = document.querySelectorAll('input[name="gender"]');
-    const hobbyCheckboxes = document.querySelectorAll('#hobbyGroup input[type="checkbox"]');
-    const isPublicCheckbox = document.getElementById("isPublic");
-    const editButton = document.getElementById("editButton");
-    const saveButton = document.getElementById("saveButton");
-    const messageBox = document.getElementById('messageBox');
-    const messageText = document.getElementById('messageText');
-    const messageOkButton = document.getElementById('messageOkButton');
-
-    // --- Custom Alert Function ---
-    function showCustomAlert(message) {
-        messageText.textContent = message;
-        messageBox.classList.remove('hidden');
-    }
-
-    messageOkButton.addEventListener('click', () => {
-        messageBox.classList.add('hidden');
-    });
-    
-    // --- Utility Functions ---
-    function updateWelcomeMessage() {
-      const userid = sessionStorage.getItem("userid");
-      if (userid) {
-        welcomeDiv.textContent = `${userid}님 어서오세요!`;
-      } else {
-        welcomeDiv.textContent = "로그인이 필요합니다.";
-      }
-    }
-
-    function populateAgeSelect() {
-      if (!ageSelect.options.length) { // Populate only if empty
-        for (let i = 18; i <= 100; i++) { // Assuming min age 18
-          const option = document.createElement("option");
-          option.value = i;
-          option.text = i;
-          ageSelect.appendChild(option);
+      function updateWelcomeMessage() {
+        const name = sessionStorage.getItem("name");
+        const welcomeDiv = document.getElementById("welcomeMessage");
+        if (name) {
+          welcomeDiv.textContent = `${name}님 어서오세요!`;
+        } else {
+          welcomeDiv.textContent = "";
         }
       }
-    }
-    
-    function setFormDisabled(disabled) {
-      nameInput.disabled = disabled; // Name is always userid, so always disabled for editing
-      ageSelect.disabled = disabled;
-      genderRadios.forEach(radio => radio.disabled = disabled);
-      locationSelect.disabled = disabled;
-      hobbyCheckboxes.forEach(checkbox => checkbox.disabled = disabled);
-      isPublicCheckbox.disabled = disabled;
 
-      // Ensure correct styling for disabled elements (Tailwind handles some, custom CSS handles others)
-      const elements = [nameInput, ageSelect, locationSelect, isPublicCheckbox, ...genderRadios, ...hobbyCheckboxes];
-        elements.forEach(el => {
-            if (disabled) {
-                el.classList.add('disabled:opacity-75', 'disabled:cursor-not-allowed', 'disabled:bg-gray-200');
-            } else {
-                el.classList.remove('disabled:opacity-75', 'disabled:cursor-not-allowed', 'disabled:bg-gray-200');
-            }
-        });
-    }
-
-    // --- Event Handlers & Logic ---
-    function logout() {
-      sessionStorage.removeItem("userid");
-      showCustomAlert("로그아웃 되었습니다.");
+      // 페이지 로드 시 호출
       updateWelcomeMessage();
-      profileForm.style.display = "none"; // Hide profile form on logout
-      // window.location.reload(); // Consider if reload is necessary or just UI update
-    }
 
-    function handleLogin() {
-      // Redirect to login/signup page (assuming index.html is that page)
-      window.location.href = "index.html";
-    }
-
-    function showSortedProfiles() {
-      showCustomAlert("정렬된 프로필 보기 기능은 현재 준비 중입니다.");
-    }
-
-    function showProfile() {
-      // Toggle profile form visibility
-      if (profileForm.style.display === "block" || profileForm.classList.contains('flex')) {
-        profileForm.style.display = "none";
-        profileForm.classList.remove('flex');
-        profileForm.classList.add('hidden');
-        return;
+      function logout() {
+        sessionStorage.removeItem("userid");
+        sessionStorage.removeItem("name");
+        alert("로그아웃 되었습니다.");
+        updateWelcomeMessage(); // 환영 메시지 초기화
+        window.location.reload();
       }
 
-      const userid = sessionStorage.getItem("userid");
-      console.log("현재 로그인한 유저 ID:", userid);
-
-      if (!userid) {
-        showCustomAlert("로그인이 필요합니다. '회원가입 / 로그인' 버튼을 눌러주세요.");
-        return;
+      const ageSelect = document.getElementById("age");
+      for (let i = 1; i <= 100; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = i;
+        ageSelect.appendChild(option);
       }
 
-      // Fetch profile data
-      fetch('/get_profile', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userid })
-      })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+      function handleLogin() {
+        // 로그인 페이지 또는 회원가입 페이지 이동 예시
+        window.location.href = "index.html";
+      }
+
+      function showProfile() {
+  const form = document.getElementById("profileForm");
+  const rankingForm = document.getElementById("rankingForm"); // 새로운 사람 만나기 폼
+
+  // 이미 프로필 폼이 보이는 상태에서 버튼을 다시 누르면 숨김
+  if (form.style.display === "flex") {
+    form.style.display = "none"; // 숨김
+    return;
+  }
+
+  const userid = sessionStorage.getItem("userid");
+  if (!userid) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+
+  fetch("/get_profile", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userid }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.profile) {
+        const p = data.profile;
+        // 프로필 폼을 보이게 설정
+        form.style.display = "flex";
+        form.style.flexDirection = "column"; // ★★★ 이 부분을 추가해주세요 ★★★
+
+        // 다른 폼(rankingForm)이 열려있다면 숨김 처리
+        if (rankingForm.style.display !== "none") {
+            rankingForm.style.display = "none";
         }
-        return res.json();
-      })
-      .then(data => {
-        console.log("서버에서 받은 데이터:", data);
-        if (data.profile) {
-          const p = data.profile;
-          // Populate form fields
-          nameInput.value = p.userid || ""; // Name is typically the userid and not editable
-          ageSelect.value = p.age || "";
-          genderRadios.forEach(radio => {
-            radio.checked = (radio.value === p.gender);
-          });
-          locationSelect.value = p.region || "";
 
-          // Handle interests: ensure it's an array
-          const interests = Array.isArray(p.interests)
-            ? p.interests
-            : typeof p.interests === "string"
-              ? p.interests.split(",").map(h => h.trim()).filter(h => h) // Filter out empty strings
-              : [];
-          
-          hobbyCheckboxes.forEach(box => {
+        document.getElementById("name").value = p.name || "";
+        document.getElementById("age").value = p.age || "";
+        document
+          .querySelectorAll('input[name="gender"]')
+          .forEach((radio) => {
+            radio.checked = radio.value === p.gender;
+          });
+        document.getElementById("location").value = p.region || "";
+
+        const interests = Array.isArray(p.interests)
+          ? p.interests
+          : typeof p.interests === "string"
+          ? p.interests.split(",").map((h) => h.trim())
+          : [];
+
+        document
+          .querySelectorAll('#hobbyGroup input[type="checkbox"]')
+          .forEach((box) => {
             box.checked = interests.includes(box.value);
           });
 
-          isPublicCheckbox.checked = !!p.isPublic;
-          
-          // Display and disable form
-          profileForm.style.display = "block"; // Use block for standard flow
-          profileForm.classList.remove('hidden');
-          profileForm.classList.add('flex', 'flex-col'); // Use flex for internal layout
-          setFormDisabled(true);
-          editButton.style.display = "inline-block";
-          saveButton.style.display = "none";
-        } else {
-          showCustomAlert(data.message || "프로필을 불러오지 못했습니다. 새로운 프로필을 작성하시겠습니까?");
-          // Optionally, enable form for new profile creation if desired
-           profileForm.style.display = "block";
-           profileForm.classList.remove('hidden');
-           profileForm.classList.add('flex', 'flex-col');
-           nameInput.value = userid; // Pre-fill name with userid
-           setFormDisabled(false); // Enable form for new entry
-           editButton.style.display = "none";
-           saveButton.style.display = "inline-block";
+        document.getElementById("isPublic").checked = !!p.isPublic;
+        setFormDisabled(true);
+
+        if (p.age) {
+          sessionStorage.setItem("userAge", p.age);
         }
-      })
-      .catch(err => {
-        console.error("프로필 불러오기 에러:", err);
-        showCustomAlert("서버 연결에 실패했거나 프로필이 없습니다. 새로 작성해주세요.");
-        profileForm.style.display = "block";
-        profileForm.classList.remove('hidden');
-        profileForm.classList.add('flex', 'flex-col');
-        nameInput.value = userid; // Pre-fill name with userid
-        setFormDisabled(false); // Enable form for new entry
-        editButton.style.display = "none";
-        saveButton.style.display = "inline-block";
-      });
-    }
-
-    function enableEditing() {
-      setFormDisabled(false);
-      // nameInput.disabled = true; // Keep name (userid) non-editable
-      saveButton.style.display = "inline-block";
-      editButton.style.display = "none";
-    }
-
-    function saveProfile() {
-      const userid = sessionStorage.getItem("userid");
-      if (!userid) {
-        showCustomAlert("로그인이 필요합니다.");
-        return;
+      } else {
+        alert("프로필을 불러오지 못했습니다.");
       }
-
-      const age = ageSelect.value;
-      const gender = document.querySelector('input[name="gender"]:checked')?.value || "";
-      const region = locationSelect.value;
-      const interests = Array.from(
-        document.querySelectorAll('#hobbyGroup input[type="checkbox"]:checked')
-      ).map(box => box.value);
-      const isPublic = isPublicCheckbox.checked;
-
-      // Basic validation
-      if (!age || !gender || !region) {
-        showCustomAlert("나이, 성별, 거주지는 필수 항목입니다.");
-        return;
-      }
-
-      fetch("/update_profile", { // Ensure this URL is correct
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userid,
-          age,
-          gender,
-          region,
-          interests, // Send as an array
-          isPublic
-        })
-      })
-      .then(res => {
-        if (!res.ok) {
-            return res.json().then(errData => { throw { status: res.status, data: errData }; });
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data.message === "프로필 업데이트 완료" || data.success) { // Adjust based on actual server response
-          showCustomAlert("저장되었습니다.");
-          setFormDisabled(true);
-          saveButton.style.display = "none";
-          editButton.style.display = "inline-block";
-        } else {
-          showCustomAlert("저장 실패: " + (data.message || "알 수 없는 오류"));
-        }
-      })
-      .catch(err => {
-        console.error("프로필 저장 에러:", err);
-        let errorMessage = "프로필 저장 중 오류가 발생했습니다.";
-        if (err.data && err.data.message) {
-            errorMessage += ` 서버 메시지: ${err.data.message}`;
-        } else if (err.message) {
-            errorMessage += ` (${err.message})`;
-        }
-        showCustomAlert(errorMessage);
-      });
-    }
-
-    // --- Initial Setup ---
-    document.addEventListener('DOMContentLoaded', () => {
-      updateWelcomeMessage();
-      populateAgeSelect(); // Populate age options
-      
-      // Initial state of form and buttons
-      profileForm.style.display = "none";
-      setFormDisabled(true); // All form fields initially disabled
-      editButton.style.display = "inline-block"; // Show edit by default
-      saveButton.style.display = "none"; // Hide save by default
-
-      // Add event listeners to hobby checkboxes to enable/disable them correctly with the form
-      const allFormInputs = profileForm.querySelectorAll('input, select');
-        allFormInputs.forEach(input => {
-            // The setFormDisabled function already handles this.
-            // This is more for if you had individual logic per input type.
-        });
+    })
+    .catch((err) => {
+      console.error("프로필 불러오기 에러:", err);
+      alert("서버 연결에 실패했습니다.");
     });
+}
 
-  </script>
-</body>
+      function enableEditing() {
+        setFormDisabled(false);
+        document.getElementById("saveButton").style.display = "inline-block";
+        document.getElementById("editButton").style.display = "none";
+      }
+
+      function setFormDisabled(disabled) {
+        document
+          .querySelectorAll("#profileForm input, #profileForm select")
+          .forEach((el) => {
+            el.disabled = disabled;
+          });
+      }
+
+      function saveProfile() {
+        const userid = sessionStorage.getItem("userid");
+        if (!userid) {
+          alert("로그인이 필요합니다.");
+          return;
+        }
+
+        const age = document.getElementById("age").value;
+        const gender =
+          document.querySelector('input[name="gender"]:checked')?.value || "";
+        const region = document.getElementById("location").value;
+        const interests = Array.from(
+          document.querySelectorAll(
+            '#hobbyGroup input[type="checkbox"]:checked'
+          )
+        ).map((box) => box.value);
+        const isPublic = document.getElementById("isPublic").checked;
+
+        fetch("/update_profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userid,
+            age,
+            gender,
+            region,
+            interests,
+            isPublic,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message === "프로필 업데이트 완료") {
+              alert("저장되었습니다.");
+              setFormDisabled(true);
+              document.getElementById("saveButton").style.display = "none";
+              document.getElementById("editButton").style.display =
+                "inline-block";
+            } else {
+              alert("저장 실패: " + data.message);
+            }
+          });
+      }
+
+      function showSortedProfiles() {
+  const userid = sessionStorage.getItem("userid");
+  if (!userid) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+
+  const form = document.getElementById("rankingForm");
+  const profileForm = document.getElementById("profileForm");
+
+  // 프로필 폼이 열려 있다면 닫기
+  if (profileForm.style.display === "flex") {
+    profileForm.style.display = "none";
+  }
+
+  // 순위 폼이 이미 열려 있으면 닫고, 아니면 열기
+  if (form.style.display === "flex") {
+    form.style.display = "none";
+  } else {
+    form.style.display = "flex";
+    form.style.flexDirection = "column";
+  }
+}
+
+      function submitRanking() {
+        const form = document.getElementById("rankingForm");
+        const ageRank = form.ageRank.value;
+        const locationRank = form.locationRank.value;
+        const hobbyRank = form.hobbyRank.value;
+        const preferredGender = form.preferredGender.value;
+
+        const ranks = [ageRank, locationRank, hobbyRank];
+        const uniqueRanks = new Set(ranks);
+
+        if (ranks.includes("") || uniqueRanks.size !== ranks.length) {
+          alert("1~3까지 중복 없이 순위를 모두 선택해주세요.");
+          return;
+        }
+
+        if (!preferredGender) {
+          alert("성별을 선택해주세요.");
+          return;
+        }
+
+        const userid = sessionStorage.getItem("userid");
+        if (!userid) {
+          alert("로그인이 필요합니다.");
+          return;
+        }
+
+        fetch("/save_ranking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userid,
+            ageRank,
+            locationRank,
+            hobbyRank,
+            preferredGender,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              alert("우선순위가 저장되었습니다.");
+              form.style.display = "none";
+
+              const existing = document.getElementById("sortedResult");
+              if (existing) existing.remove();
+
+              const currentUserAge = parseInt(
+                sessionStorage.getItem("userAge")
+              );
+              const sorted = data.users;
+
+              const container = document.createElement("div");
+              container.id = "sortedResult";
+              container.style.marginTop = "30px";
+              container.style.backgroundColor = "#fff";
+              container.style.padding = "20px";
+              container.style.borderRadius = "10px";
+              container.style.width = "80%";
+              container.style.maxWidth = "600px";
+
+              const title = document.createElement("h3");
+              title.textContent = "추천 사용자 목록 (나이순):";
+              title.style.marginBottom = "15px";
+              container.appendChild(title);
+
+              sorted.forEach((user, idx) => {
+                const name = user.name || "이름없음";
+                const age = user.age || "정보없음";
+                const gender = user.gender || "정보없음";
+                const region = user.region || "정보없음";
+                const interests = Array.isArray(user.interests)
+                  ? user.interests.join(", ")
+                  : "취미 없음";
+
+                const div = document.createElement("div");
+                div.textContent = `${
+                  idx + 1
+                }. ${name} (나이: ${age}, 성별: ${gender}, 지역: ${region}, 취미: ${interests})`;
+                div.style.margin = "6px 0";
+                container.appendChild(div);
+              });
+              document.body.appendChild(container);
+            } else {
+              alert("저장 실패: " + data.message);
+            }
+          })
+          .catch((err) => {
+            alert("서버 연결 실패");
+            console.error(err);
+          });
+      }
+
+      function quickSort(users, keyFn) {
+        if (users.length <= 1) return users;
+
+        const pivot = users[0];
+        const left = users.slice(1).filter((u) => keyFn(u) < keyFn(pivot));
+        const right = users.slice(1).filter((u) => keyFn(u) >= keyFn(pivot));
+
+        return [...quickSort(left, keyFn), pivot, ...quickSort(right, keyFn)];
+      }
+    </script>
+
+    <footer>노인팅 프로젝트</footer>
+  </body>
 </html>
