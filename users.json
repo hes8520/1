@@ -1,5 +1,19 @@
 [
   {
+    "userid": "ddd789dde",
+    "password": "fffff123123f",
+    "age": 520,
+    "gender": "남성",
+    "region": "서울",
+    "interests": [
+      "등산",
+      "테니스",
+      "요리"
+    ],
+    "isPublic": true,
+    "name": "정유진"
+  },
+  {
     "userid": "ddddde",
     "password": "ffffff",
     "age": 50,
@@ -1473,6 +1487,18 @@
     "interests": [
       "영화",
       "장기"
+    ],
+    "isPublic": false
+  },
+  {
+    "userid": "123456789",
+    "password": "1234556789",
+    "name": "안태환",
+    "age": "18",
+    "gender": "여성",
+    "region": "전남",
+    "interests": [
+      "영화"
     ],
     "isPublic": false
   }
