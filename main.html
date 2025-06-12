@@ -523,7 +523,6 @@
           .then((data) => {
             if (data.success) {
               alert("우선순위가 저장되었습니다.");
-              form.style.display = "none";
 
               const existing = document.getElementById("sortedResult");
               if (existing) existing.remove();
